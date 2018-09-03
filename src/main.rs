@@ -1,11 +1,11 @@
 extern crate dns_lookup;
 
-#[macro_use]
 extern crate serde_derive;
 extern crate serde;
+#[macro_use]
 extern crate serde_json;
 
-use std::env;
+//use std::env;
 use std::fs::File;
 use std::io::Read;
 
@@ -24,7 +24,21 @@ fn read_in() -> Result<(), Error> {
     config_file.read_to_string(&mut data).unwrap();
     
     let mut v: Value = serde_json::from_str(&data)?;
-    println!("{} {}", v["servers"]["name"], v["servers"]["address"]);
+    //println!("{:?} {:?}", v["servers"][0]["name"], v["servers"][0]["address"]);
+    
+    //let mut servers = Vec::new();
+    //let mut servers: Vec<Value> = ;
+    
+    for s in  {
+        /*
+        let mut server = json!({
+            "name": s["name"],
+            "hostname": s["hostname"]
+        });*/
+        println!("{:?} {:?}", s["name"], s["hostname"]);
+        //servers.push(server);
+    }
+ 
 
     Ok(())
 }
@@ -37,10 +51,9 @@ fn main() {
 
     let result = read_in();
     let result = match result {
-         Ok(()) => (),
+        Ok(()) => (),
         Err(error) => {
             panic!("There was a problem reading in config.json: {:?}", error)
         },
     };
-    
 }
