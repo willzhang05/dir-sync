@@ -24,12 +24,13 @@ fn read_in() -> Result<(), Error> {
     config_file.read_to_string(&mut data).unwrap();
     
     let mut v: Value = serde_json::from_str(&data)?;
+
     //println!("{:?} {:?}", v["servers"][0]["name"], v["servers"][0]["address"]);
     
     //let mut servers = Vec::new();
     //let mut servers: Vec<Value> = ;
     
-    for s in  {
+    /*for s in  {
         /*
         let mut server = json!({
             "name": s["name"],
@@ -37,7 +38,7 @@ fn read_in() -> Result<(), Error> {
         });*/
         println!("{:?} {:?}", s["name"], s["hostname"]);
         //servers.push(server);
-    }
+    }*/
  
 
     Ok(())
