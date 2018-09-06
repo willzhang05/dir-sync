@@ -2,7 +2,7 @@
 #include <fstream>
 #include <streambuf>
 #include <nlohmann/json.hpp>
-#include <boost/asio.hpp>
+//#include <boost/asio.hpp>
 #include <libssh/libsshpp.hpp>
 
 using json = nlohmann::json;
@@ -20,6 +20,7 @@ using json = nlohmann::json;
     }
     
 };*/
+
 
 int read_in(json &config) {
     std::ifstream config_file("config.json");
@@ -41,7 +42,15 @@ int main() {
     //Server test = Server(config["servers"_json_pointer]);
     std::vector<json> servers = config["servers"];
     for (int i = 0; i < (int) sizeof(servers); i++) {
-        
+        ssh::Session session();
+        ssh::Channel channel();
+        int port = servers[i]["port"];
+        std::string address = servers[i]["address"];
+        std::string user = servers[i]["user"];
+        session.setOption(SSH_OPTIONS_HOST, &address);
+        session.setOption(SSH_OPTIONS_PORT, port);
+        session.setOption(SSH_OPTIONS_USER, &user);
+    
     }
     std::cout<<servers;
     
