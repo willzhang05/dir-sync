@@ -2,8 +2,9 @@
 #include <fstream>
 #include <streambuf>
 #include <nlohmann/json.hpp>
+#include <libssh/libssh>
 //#include <boost/asio.hpp>
-#include <libssh/libsshpp.hpp>
+//#include <libssh/libsshpp.hpp>
 
 using json = nlohmann::json;
 
@@ -40,8 +41,19 @@ int main() {
         return 1;
     }
     //Server test = Server(config["servers"_json_pointer]);
+    std::vector<json> local_dir = config["local_dir"];
+    for (int i = 0; i < (int) sizeof(local_dir); i++) {
+
+    }
     std::vector<json> servers = config["servers"];
+    ssh_scp scp;
+    int rc;
+    
+    
     for (int i = 0; i < (int) sizeof(servers); i++) {
+        scp = ssh_scp_new(session, SSH_SCP_WRITE | SSH_SCP_RECURSIVE, ".");
+        
+        /*
         ssh::Session session();
         ssh::Channel channel();
         int port = servers[i]["port"];
@@ -50,9 +62,11 @@ int main() {
         session.setOption(SSH_OPTIONS_HOST, &address);
         session.setOption(SSH_OPTIONS_PORT, port);
         session.setOption(SSH_OPTIONS_USER, &user);
-    
+        session.setOption(SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
+        */
+        
     }
     std::cout<<servers;
-    
+       
     return 0;
 }
