@@ -19,7 +19,7 @@ struct Directory {
     uri: String
 }
 
-fn read_in() -> Result<(Vec<Value>,Vec<Value>), Error> {
+fn read_in<'servers,'local_dirs>(servers: &mut Vec<Value>, local_dirs: &mut Vec<Value>) -> Result<(&'servers Vec<Value>, &'local_dirs Vec<Value>), Error> {
     let mut config_file = File::open("config.json").unwrap();
     let mut data = String::new();
     config_file.read_to_string(&mut data).unwrap();
@@ -27,16 +27,18 @@ fn read_in() -> Result<(Vec<Value>,Vec<Value>), Error> {
     let v: Value = serde_json::from_str(&data)?;
 
     //println!("{:?} {:?}", v["servers"][0]["name"], v["servers"][0]["address"]);
+
+    let server_vec: Vec<Value> = v["servers"].as_array().unwrap().to_vec();
+    servers = Vec::new();
     
-    let servers: Vec<Value> = v["servers"].as_array().unwrap().to_vec();
-    
-    for s in servers {
+    for s in server_vec {
         println!("{:?} {:?}", s["name"], s["hostname"]);
     }
  
-    let local_dirs: Vec<Value> = v["local_dir"].as_array().unwrap().to_vec();
+    let ld_vec: Vec<Value> = v["local_dir"].as_array().unwrap().to_vec();
+    local_dirs = Vec::new();
 
-    for dir in local_dirs {
+    for dir in ld_vec {
         println!("{:?} {:?}", dir["label"], dir["uri"]);
     }
 
@@ -48,11 +50,15 @@ fn main() {
     /*for argument in env::args_os() {
         println!("{:?}", argument);    
     }*/
-    let result = read_in();
+    let servers: Vec<Value>;
+    let local_dirs: Vec<Value>;
+
+    let result = read_in(&mut servers, &mut local_dirs);
     let result = match result {
-        Ok((servers, local_dirs)) => (),
+        Ok((s, l)) => (s, l),
         Err(error) => {
             panic!("There was a problem reading in config.json: {:?}", error)
         },
     };
+
 }
