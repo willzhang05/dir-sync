@@ -19,7 +19,7 @@ struct Directory {
     uri: String
 }
 
-fn read_in<'servers,'local_dirs>(servers: &mut Vec<Value>, local_dirs: &mut Vec<Value>) -> Result<(&'servers Vec<Value>, &'local_dirs Vec<Value>), Error> {
+fn read_in(servers: &mut Vec<Value>, local_dirs: &mut Vec<Value>) -> Result<(), Error> {
     let mut config_file = File::open("config.json").unwrap();
     let mut data = String::new();
     config_file.read_to_string(&mut data).unwrap();
@@ -29,20 +29,38 @@ fn read_in<'servers,'local_dirs>(servers: &mut Vec<Value>, local_dirs: &mut Vec<
     //println!("{:?} {:?}", v["servers"][0]["name"], v["servers"][0]["address"]);
 
     let server_vec: Vec<Value> = v["servers"].as_array().unwrap().to_vec();
-    servers = Vec::new();
     
     for s in server_vec {
         println!("{:?} {:?}", s["name"], s["hostname"]);
+        servers.push(s);
     }
  
     let ld_vec: Vec<Value> = v["local_dir"].as_array().unwrap().to_vec();
-    local_dirs = Vec::new();
 
     for dir in ld_vec {
         println!("{:?} {:?}", dir["label"], dir["uri"]);
+        local_dirs.push(dir);
     }
 
-    Ok((servers, local_dirs))
+    Ok(())
+}
+
+/*
+fn check_dir(local_dirs: &Vec<Value>) {
+    
+}
+*/
+
+fn check_host(hostname: String) -> bool {
+    let lookup_result = lookup_host(&hostname);
+    let lookup_result = match lookup_result {
+        Ok(()) => true,
+        Err(error) => {
+            panic!("Invalid hostname specified in config: {:?}", error)
+        },
+    };
+    lookup_result
+
 }
 
 fn main() {
@@ -50,15 +68,20 @@ fn main() {
     /*for argument in env::args_os() {
         println!("{:?}", argument);    
     }*/
-    let servers: Vec<Value>;
-    let local_dirs: Vec<Value>;
+    let mut servers: Vec<Value> = vec![];
+    let mut local_dirs: Vec<Value> = vec![];
 
     let result = read_in(&mut servers, &mut local_dirs);
     let result = match result {
-        Ok((s, l)) => (s, l),
+        Ok(()) => (),
         Err(error) => {
             panic!("There was a problem reading in config.json: {:?}", error)
         },
     };
+    
+    for server in servers {
+        check_host(server["hostname"].to_string());
+    }
+    
 
 }
