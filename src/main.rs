@@ -52,14 +52,11 @@ fn check_dir(local_dirs: &Vec<Value>) {
 */
 
 fn check_host(hostname: String) -> bool {
-    let lookup_result = lookup_host(&hostname);
-    let lookup_result = match lookup_result {
-        Ok(()) => true,
-        Err(error) => {
-            panic!("Invalid hostname specified in config: {:?}", error)
-        },
-    };
-    lookup_result
+    let lookup_ips: Vec<std::net::IpAddr> = lookup_host(&hostname).unwrap();
+    for ip in lookup_ips {
+        println!("{:?}", ip);
+    }
+    lookup_ips.len() > 0
 
 }
 
